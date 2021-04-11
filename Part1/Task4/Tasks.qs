@@ -1,6 +1,8 @@
 namespace QCHack.Task4 {
     open Microsoft.Quantum.Canon;
     open Microsoft.Quantum.Intrinsic;
+    open Microsoft.Quantum.Arithmetic;
+    open Microsoft.Quantum.Diagnostics;
 
     // Task 4 (12 points). f(x) = 1 if the graph edge coloring is triangle-free
     // 
@@ -43,7 +45,100 @@ namespace QCHack.Task4 {
         colorsRegister : Qubit[], 
         target : Qubit
     ) : Unit is Adj+Ctl {
-        // ...
+        // declare acillae bits
+        use ancillae = Qubit[3];
+        use adder = Qubit[4];
+        use adder_anc = Qubit[3];
+        let num_edges = Length(edges);
+        // iterate through triplets of edges
+        within{
+            for i in 0 .. num_edges-1 {
+                for j in i+1 .. num_edges-1 {
+                    for k in j+1 .. num_edges-1 {
+                        // check if they form triangle
+                        if isTriangle((i, j, k), edges) {
+                            //Message($"{i}, {j}, {k}");
+                            within {
+                                // check if triangle have same colours
+                                CNOT(colorsRegister[i], ancillae[0]);
+                                CNOT(colorsRegister[j], ancillae[0]);
+                                CNOT(colorsRegister[j], ancillae[1]);
+                                CNOT(colorsRegister[k], ancillae[1]); 
+                                X(ancillae[0]);
+                                X(ancillae[1]);
+                                CCNOT(ancillae[0], ancillae[1], ancillae[2]);
+                                // track carry over
+                                CCNOT(ancillae[2], adder[0], adder_anc[0]);
+                                for x in 1 .. Length(adder)-2 {
+                                    CCNOT(adder[x], adder_anc[x-1], adder_anc[x]);
+                                }
+                            } 
+                            // track total number of single-colour triangles (up to 15)
+                            apply {
+                                // implement carry over
+                                for x in 0 .. Length(adder)-2 {
+                                    CNOT(adder_anc[x], adder[x+1]);
+                                }
+                                CNOT(ancillae[2], adder[0]);
+                            }
+                        }
+                    }
+                }
+            }
+            //DumpRegister((), adder);
+            // flip target if no single colour triangle
+            for i in 0 .. Length(adder)-1 {
+                X(adder[i]);
+            }
+            CCNOT(adder[0], adder[1], ancillae[0]);
+            CCNOT(adder[2], adder[3], ancillae[1]);
+        } apply {
+            CCNOT(ancillae[0], ancillae[1], target);
+        }
+    }
+
+    function isTriangle (
+        indices : (Int, Int, Int),
+        edges : (Int, Int)[]
+        ) : Bool {
+        // declare variables
+        let (i, j, k) = indices;
+        let ((e1, e2), (e3, e4), (e5, e6)) = (edges[i], edges[j], edges[k]);
+        if e1 == e3 {
+            if e2 == e5 and e4 == e6 {
+                return true;
+            } elif e2 == e6 and e4 == e5 {
+                return true;
+            } else {
+                return false;
+            }
+        } elif e1 == e4 {
+            if e2 == e5 and e3 == e6 {
+                return true;
+            } elif e2 == e6 and e3 == e5 {
+                return true;
+            } else {
+                return false;
+            }
+        } elif e1 == e5 {
+            if e2 == e3 and e4 == e6 {
+                return true;
+            } elif e2 == e4 and e3 == e6 {
+                return true;
+            } else {
+                return false;
+            }
+        } elif e1 == e6 {
+            if e2 == e3 and e4 == e5 {
+                return true;
+            } elif e2 == e4 and e3 == e5 {
+                return true;
+            } else {
+                return false;
+            }
+        } else{
+            return false;
+        }
     }
 }
 

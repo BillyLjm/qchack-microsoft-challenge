@@ -57,9 +57,8 @@ namespace QCHack.Task4 {
                     for k in j+1 .. num_edges-1 {
                         // check if they form triangle
                         if isTriangle((i, j, k), edges) {
-                            //Message($"{i}, {j}, {k}");
+                            // check if triangle have same colours
                             within {
-                                // check if triangle have same colours
                                 CNOT(colorsRegister[i], ancillae[0]);
                                 CNOT(colorsRegister[j], ancillae[0]);
                                 CNOT(colorsRegister[j], ancillae[1]);
@@ -67,25 +66,33 @@ namespace QCHack.Task4 {
                                 X(ancillae[0]);
                                 X(ancillae[1]);
                                 CCNOT(ancillae[0], ancillae[1], ancillae[2]);
+                            } 
+                            // track total number of single-colour triangles (up to 15)
+                            apply {
                                 // track carry over
                                 CCNOT(ancillae[2], adder[0], adder_anc[0]);
                                 for x in 1 .. Length(adder)-2 {
                                     CCNOT(adder[x], adder_anc[x-1], adder_anc[x]);
                                 }
-                            } 
-                            // track total number of single-colour triangles (up to 15)
-                            apply {
-                                // implement carry over
+                                // implement carry over 
                                 for x in 0 .. Length(adder)-2 {
                                     CNOT(adder_anc[x], adder[x+1]);
                                 }
                                 CNOT(ancillae[2], adder[0]);
+                                // uncompute carry over ancillae
+                                for x in Length(adder)-2 .. 1 {
+                                    X(adder[x]);
+                                    CCNOT(adder[i], adder_anc[i-1], adder_anc[i]);
+                                    X(adder[x]);
+                                }
+                                X(adder[0]);
+                                CCNOT(ancillae[2], adder[0], adder_anc[0]);
+                                X(adder[0]);
                             }
                         }
                     }
                 }
             }
-            //DumpRegister((), adder);
             // flip target if no single colour triangle
             for i in 0 .. Length(adder)-1 {
                 X(adder[i]);
@@ -93,14 +100,17 @@ namespace QCHack.Task4 {
             CCNOT(adder[0], adder[1], ancillae[0]);
             CCNOT(adder[2], adder[3], ancillae[1]);
         } apply {
+            CountTriangle(edges);
+            DumpRegister((), adder);
             CCNOT(ancillae[0], ancillae[1], target);
         }
+        DumpRegister((), [target]);
     }
 
     function isTriangle (
         indices : (Int, Int, Int),
         edges : (Int, Int)[]
-        ) : Bool {
+    ) : Bool {
         // declare variables
         let (i, j, k) = indices;
         let ((e1, e2), (e3, e4), (e5, e6)) = (edges[i], edges[j], edges[k]);

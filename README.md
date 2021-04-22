@@ -1,11 +1,13 @@
+![QCHack Banner](qchack_banner.jpg)  
+  
 # Quantum Coalition Hack - Microsoft Challenge  
   
-These are my solutions to Microsoft's challenge in [QCHack 2021](https://www.qchack.io/)  
+These are my solutions to Microsoft's challenge in [QCHack 2021](https://www.quantumcoalition.io/)  
 The original challenge repository can be found at [/quantumcoalition/qchack-microsoft-challenge](https://github.com/quantumcoalition/qchack-microsoft-challenge)  
-I only completed the structured part of the challenge, which involved implementing oracle circuits for a set of given mappings  
+I only completed the structured part of the challenge, which involved implementing specific oracle circuits  
   
 ## Hackathon Details  
-**Site**: [QCHack.io](https://www.qchack.io/)  
+**Site**: [QuantumCoalition.io](https://www.quantumcoalition.io/)  
 **Date**: April 2021  
   
 ## Files  
@@ -19,6 +21,6 @@ The provided test cases can then be run with the command `dotnet test` in the co
 |---------|-----------------|------------------------------------------------------------|-----------|  
 | `Task1` | [link](./Task1) | f(x) = 1 if x is divisible by 4                            | 1 point   |  
 | `Task2` | [link](./Task2) | f(x) = 1 if at least two of three input bits are different | 2 points  |  
-| `Task3` | [link](./Task3) | Task 2, without 3-qubit gates                              | 4 points  |  
+| `Task3` | [link](./Task3) | Task 2, but strictly without 3-qubit gates                 | 4 points  |  
 | `Task4` | [link](./Task4) | f(x) = 1 if the graph edge colouring is triangle-free      | 12 points |  
   

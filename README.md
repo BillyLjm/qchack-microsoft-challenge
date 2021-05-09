@@ -11,7 +11,7 @@ I only completed the structured part of the challenge, which involved implementi
 **Date**: April 2021  
 
 ## Certificate
-<a href="https://www.quantumcoalition.io/"><img src="./qchack_certificate.png" alt="QC Hack 2021 Certificate" width="100%"></a>  
+[![QCHack Certificate](qchack_certificate.png)](https://www.quantumcoalition.io/)
   
 ## Files  
 There were a total of 4 tasks, divided individually into their own folders.  

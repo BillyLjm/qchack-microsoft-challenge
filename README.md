@@ -9,6 +9,9 @@ I only completed the structured part of the challenge, which involved implementi
 ## Hackathon Details  
 **Site**: [QuantumCoalition.io](https://www.quantumcoalition.io/)  
 **Date**: April 2021  
+
+## Certificate
+<a href="https://www.quantumcoalition.io/"><img src="./qchack_certificate.png" alt="QC Hack 2021 Certificate" height="500px"></a>  
   
 ## Files  
 There were a total of 4 tasks, divided individually into their own folders.  
